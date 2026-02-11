@@ -144,11 +144,11 @@ EOT
     roles = object({
       head_node = object({
         password = optional(string)
-        script_actions = optional(object({
+        script_actions = optional(list(object({
           name       = string
           parameters = optional(string)
           uri        = string
-        }))
+        })))
         ssh_keys           = optional(set(string))
         subnet_id          = optional(string)
         username           = string
@@ -162,20 +162,20 @@ EOT
             min_instance_count = number
           }))
           recurrence = optional(object({
-            schedule = object({
+            schedule = list(object({
               days                  = list(string)
               target_instance_count = number
               time                  = string
-            })
+            }))
             timezone = string
           }))
         }))
         password = optional(string)
-        script_actions = optional(object({
+        script_actions = optional(list(object({
           name       = string
           parameters = optional(string)
           uri        = string
-        }))
+        })))
         ssh_keys              = optional(set(string))
         subnet_id             = optional(string)
         target_instance_count = number
@@ -185,11 +185,11 @@ EOT
       })
       zookeeper_node = object({
         password = optional(string)
-        script_actions = optional(object({
+        script_actions = optional(list(object({
           name       = string
           parameters = optional(string)
           uri        = string
-        }))
+        })))
         ssh_keys           = optional(set(string))
         subnet_id          = optional(string)
         username           = string
@@ -198,7 +198,7 @@ EOT
       })
     })
     compute_isolation = optional(object({
-      compute_isolation_enabled = optional(bool, false)
+      compute_isolation_enabled = optional(bool) # Default: false
       host_sku                  = optional(string)
     }))
     disk_encryption = optional(object({
@@ -236,8 +236,8 @@ EOT
       primary_key                = string
     }))
     network = optional(object({
-      connection_direction = optional(string, "Inbound")
-      private_link_enabled = optional(bool, false)
+      connection_direction = optional(string) # Default: "Inbound"
+      private_link_enabled = optional(bool)   # Default: false
     }))
     private_link_configuration = optional(object({
       group_id = string
@@ -272,5 +272,37 @@ EOT
       storage_resource_id          = string
     }))
   }))
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.roles.head_node.script_actions == null || (length(v.roles.head_node.script_actions) >= 1)
+      )
+    ])
+    error_message = "Each script_actions list must contain at least 1 items"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        length(v.roles.worker_node.autoscale.recurrence.schedule) >= 1
+      )
+    ])
+    error_message = "Each schedule list must contain at least 1 items"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.roles.worker_node.script_actions == null || (length(v.roles.worker_node.script_actions) >= 1)
+      )
+    ])
+    error_message = "Each script_actions list must contain at least 1 items"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.roles.zookeeper_node.script_actions == null || (length(v.roles.zookeeper_node.script_actions) >= 1)
+      )
+    ])
+    error_message = "Each script_actions list must contain at least 1 items"
+  }
 }
 
