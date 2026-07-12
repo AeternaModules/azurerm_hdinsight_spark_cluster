@@ -1,3 +1,7 @@
+output "hdinsight_spark_clusters_id" {
+  description = "Map of id values across all hdinsight_spark_clusters, keyed the same as var.hdinsight_spark_clusters"
+  value       = { for k, v in azurerm_hdinsight_spark_cluster.hdinsight_spark_clusters : k => v.id }
+}
 output "hdinsight_spark_clusters_cluster_version" {
   description = "Map of cluster_version values across all hdinsight_spark_clusters, keyed the same as var.hdinsight_spark_clusters"
   value       = { for k, v in azurerm_hdinsight_spark_cluster.hdinsight_spark_clusters : k => v.cluster_version }
