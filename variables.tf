@@ -280,135 +280,150 @@ EOT
     ])
     error_message = "Each schedule list must contain at least 1 items"
   }
-  # --- Unconfirmed validation candidates, derived from azurerm_hdinsight_spark_cluster's provider source ---
-  # Not auto-enabled: either a bespoke provider validator we can't safely translate,
-  # or a path that crosses a list-typed block (needs its own for_each wrapping).
-  # Review, translate into a real validation{} block above, and delete once confirmed.
-  # path: name
-  #   source:    [from validate.HDInsightName] !matched
-  # path: resource_group_name
-  #   condition: length(value) <= 90
-  #   message:   [from resourcegroups.ValidateName: invalid when len(value) > 90]
-  #   source:    [from resourcegroups.ValidateName: invalid when len(value) > 90]
-  # path: resource_group_name
-  #   condition: !endswith(value, ".")
-  #   message:   [from resourcegroups.ValidateName: must not end with "."]
-  #   source:    [from resourcegroups.ValidateName: must not end with "."]
-  # path: resource_group_name
-  #   condition: length(value) != 0
-  #   message:   [from resourcegroups.ValidateName: invalid when len(value) == 0]
-  #   source:    [from resourcegroups.ValidateName: invalid when len(value) == 0]
-  # path: resource_group_name
-  #   source:    [from resourcegroups.ValidateName] !matched
-  # path: location
-  #   source:    location.EnhancedValidate: no recognizable `if ... { errors = append(...) }` pattern - read it by hand
-  # path: cluster_version
-  #   source:    [from validate.HDInsightClusterVersion] re != nil && !re.MatchString(version)
-  # path: cluster_version
-  #   source:    [from validate.HDInsightClusterVersion] re != nil && !re.MatchString(version)
-  # path: tier
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: tls_min_version
-  #   condition: contains(["1.0", "1.1", "1.2"], value)
-  #   message:   must be one of: 1.0, 1.1, 1.2
-  # path: disk_encryption.encryption_algorithm
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: disk_encryption.key_vault_managed_identity_id
-  #   source:    [from commonids.ValidateUserAssignedIdentityID] !ok
-  # path: disk_encryption.key_vault_managed_identity_id
-  #   source:    [from commonids.ValidateUserAssignedIdentityID] err != nil
-  # path: disk_encryption.key_vault_key_id
-  #   source:    [from keyvault.ValidateNestedItemID] !ok
-  # path: disk_encryption.key_vault_key_id
-  #   source:    [from keyvault.ValidateNestedItemID] err != nil
-  # path: compute_isolation.host_sku
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: network.connection_direction
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: security_profile.aadds_resource_id
-  #   source:    [from azure.ValidateResourceID] !ok
-  # path: security_profile.aadds_resource_id
-  #   source:    [from azure.ValidateResourceID] err != nil
-  # path: security_profile.domain_name
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: security_profile.domain_username
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: security_profile.domain_user_password
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: security_profile.ldaps_urls[*]
-  #   source:    [from validate.HDInsightClusterLdapsUrls] !ok
-  # path: security_profile.ldaps_urls[*]
-  #   source:    [from validate.HDInsightClusterLdapsUrls] err != nil
-  # path: security_profile.ldaps_urls[*]
-  #   source:    [from validate.HDInsightClusterLdapsUrls] ldapsUrl.Scheme != "ldaps"
-  # path: security_profile.msi_resource_id
-  #   source:    [from commonids.ValidateUserAssignedIdentityID] !ok
-  # path: security_profile.msi_resource_id
-  #   source:    [from commonids.ValidateUserAssignedIdentityID] err != nil
-  # path: security_profile.cluster_users_group_dns[*]
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: storage_account.storage_account_key
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: storage_account.storage_container_id
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: storage_account.storage_resource_id
-  #   source:    [from commonids.ValidateStorageAccountID] !ok
-  # path: storage_account.storage_resource_id
-  #   source:    [from commonids.ValidateStorageAccountID] err != nil
-  # path: storage_account_gen2.storage_resource_id
-  #   source:    [from commonids.ValidateStorageAccountID] !ok
-  # path: storage_account_gen2.storage_resource_id
-  #   source:    [from commonids.ValidateStorageAccountID] err != nil
-  # path: storage_account_gen2.filesystem_id
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: storage_account_gen2.managed_identity_resource_id
-  #   source:    [from azure.ValidateResourceID] !ok
-  # path: storage_account_gen2.managed_identity_resource_id
-  #   source:    [from azure.ValidateResourceID] err != nil
-  # path: private_link_configuration.ip_configuration.private_ip_address
-  #   source:    validation.IsIPAddress(...) - no translation rule yet, add one
-  # path: private_link_configuration.ip_configuration.private_ip_allocation_method
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: private_link_configuration.ip_configuration.subnet_id
-  #   source:    [from commonids.ValidateSubnetID] !ok
-  # path: private_link_configuration.ip_configuration.subnet_id
-  #   source:    [from commonids.ValidateSubnetID] err != nil
-  # path: tags
-  #   condition: length(value) <= 50
-  #   message:   [from tags.Validate: invalid when len(value) > 50]
-  #   source:    [from tags.Validate: invalid when len(value) > 50]
-  # path: tags
-  #   condition: length(value) <= 512
-  #   message:   [from tags.Validate: invalid when len(value) > 512]
-  #   source:    [from tags.Validate: invalid when len(value) > 512]
-  # path: tags
-  #   source:    [from tags.Validate] err != nil
-  # path: tags
-  #   condition: length(value) <= 256
-  #   message:   [from tags.Validate: invalid when len(value) > 256]
-  #   source:    [from tags.Validate: invalid when len(value) > 256]
-  # path: monitor.log_analytics_workspace_id
-  #   condition: can(regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", value))
-  #   message:   must be a valid UUID
-  # path: monitor.primary_key
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: extension.log_analytics_workspace_id
-  #   condition: can(regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", value))
-  #   message:   must be a valid UUID
-  # path: extension.primary_key
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: zones[*]
-  #   condition: length(value) > 0
-  #   message:   must not be empty
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        length(v.resource_group_name) <= 90
+      )
+    ])
+    error_message = "[from resourcegroups.ValidateName: invalid when len(value) > 90]"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        !endswith(v.resource_group_name, ".")
+      )
+    ])
+    error_message = "[from resourcegroups.ValidateName: must not end with \".\"]"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        length(v.resource_group_name) != 0
+      )
+    ])
+    error_message = "[from resourcegroups.ValidateName: invalid when len(value) == 0]"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.tls_min_version == null || (contains(["1.0", "1.1", "1.2"], v.tls_min_version))
+      )
+    ])
+    error_message = "must be one of: 1.0, 1.1, 1.2"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.compute_isolation == null || (v.compute_isolation.host_sku == null || (length(v.compute_isolation.host_sku) > 0))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.security_profile == null || (length(v.security_profile.domain_name) > 0)
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.security_profile == null || (length(v.security_profile.domain_username) > 0)
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.security_profile == null || (length(v.security_profile.domain_user_password) > 0)
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.security_profile == null || (v.security_profile.cluster_users_group_dns == null || (alltrue([for x in v.security_profile.cluster_users_group_dns : length(x) > 0])))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.storage_account == null || alltrue([for item in v.storage_account : (length(item.storage_account_key) > 0)])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.storage_account == null || alltrue([for item in v.storage_account : (length(item.storage_container_id) > 0)])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.storage_account_gen2 == null || (length(v.storage_account_gen2.filesystem_id) > 0)
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.tags == null || (length(v.tags) <= 50)
+      )
+    ])
+    error_message = "[from tags.Validate: invalid when len(value) > 50]"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.monitor == null || (can(regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", v.monitor.log_analytics_workspace_id)))
+      )
+    ])
+    error_message = "must be a valid UUID"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.monitor == null || (length(v.monitor.primary_key) > 0)
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.extension == null || (can(regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", v.extension.log_analytics_workspace_id)))
+      )
+    ])
+    error_message = "must be a valid UUID"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.extension == null || (length(v.extension.primary_key) > 0)
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.hdinsight_spark_clusters : (
+        v.zones == null || (alltrue([for x in v.zones : length(x) > 0]))
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  # Note: 32 additional provider-side validators are enforced at apply time but not mirrored as validation{} blocks here (bespoke or non-mechanically-translatable).
 }
 
